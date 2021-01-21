@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>three测试文件1</title>
+		<style type="text/css">
+			body{
+				margin:0;
+				padding: 0;
+				overflow: hidden;
+			}
+		</style>
+		<script src="http://www.yanhuangxueyuan.com/versions/threejsR92/build/three.js"></script>
+		<script src="http://www.yanhuangxueyuan.com/threejs/examples/js/controls/OrbitControls.js"></script>
+	</head>
+	<body>
+		<script type="text/javascript">
+			 //1.创建场景对象
+			var scene=new THREE.Scene();
+			
+			// console.log('打印场景API',THREE.Scene);
+			console.log(scene)
+			
+			//2.创建模型
+			var geometry=new THREE.PlaneGeometry(100,100,100);//创建一个立方体几何对象BoxGeometry  模型
+			// var geometry = new THREE.SphereGeometry(60, 40, 40); //球体
+            // 2.1几何体 (Geometry)
+			// 立方体 BoxGeometry
+			// 球体 SphereGeometry
+			// 矩形缓冲平面 PlaneBufferGeometry 
+			// 矩形平面 PlaneGeometry
+			
+			//区别： 几何体和 缓冲类型几何体 含义相同，只是对象的结构不同，Threejs渲染的时候会先把Geometry转化为BufferGeometry再解析几何体顶点数据进行渲染。
+			
+			//2.1.5 Vector3定义顶点位置坐标数据
+			// Vector3 是threejs的三维向量对象，可以通过vector3对象表示一个顶点的三维坐标，顶点的法向量，几何体Geometry的顶点位置属性
+			
+			//geometry.vertices 和 BufferGeometry 顶点位置属性BufferGeometry.attributes.position相对应
+			//geometry.colors 和 BufferGeometry 顶点颜色属性BufferGeometry.attributes.color相对应
+			//geometry.faces3 和 BufferGeometry 顶点索引属性BufferGeometry.index 相对应，用来组织网格模型三角形的绘制 如 var face1 = new THREE.Face3(0, 1, 2);
+			//face3 构建三角面
+			
+			//几何体 旋转，缩放，平移
+			
+			
+			// 2.1自定义几何体 / 缓冲类型几何体
+			// 2.1.1 BufferGeometry（缓冲几何） 是面片、线或点几何体的有效表述。包括顶点位置，面片索引、法相量、颜色值、UV 坐标和自定义缓存属性值。
+			//  使用 BufferGeometry 可以有效减少向 GPU 传输上述数据所需的开销。
+			// 类型数组创建顶点数据  var vertices = new Float32Array([])
+			
+			// 注意 ：设置几何体Geometry顶点颜色属性geometry.colors，对网格模型Mesh是无效的，对于点模型Points、线模型Line是有效果
+			// 材质属性.vertexColors 要把材质的属性vertexColors设置为THREE.VertexColors
+			
+			//顶点颜色，坐标 添加 push 到geometry对象
+			//geometry.colors.push(color1, color2, color3); 
+			
+			
+			
+			//geometry.attributes 
+			// 2.1.3  BufferGeometry 相关api 使用总结 （BufferGeometry.attributes.normal 一样使用）
+			// 访问几何体顶点位置数据
+			// BufferGeometry.attributes.position
+			// 访问几何体顶点颜色数据
+			// BufferGeometry.attributes.color
+			// 访问几何体顶点法向量数据
+			// BufferGeometry.attributes.normal
+			
+			//geometry.attributes
+			// 2.1.4  顶点索引复用顶点数据  .index
+			//通过几何体BufferGeometry的顶点索引属性BufferGeometry.index可以设置几何体顶点索引数据
+			
+			//顶点索引、位置、颜色、法向量属性值 --> BufferAttribute对象
+			
+			// 创建属性缓冲区域对象
+			//2.1.2 BufferAttribute（缓冲属性）
+			
+			//其目的是为了创建各种各样顶点数据，比如顶点颜色数据，顶点位置数据，
+			//然后作为几何体BufferGeometry的顶点位置坐标属性BufferGeometry.attributes.position、顶点颜色属性BufferGeometry.attributes.color的值
+			
+			// var attribue = new THREE.BufferAttribute(vertices, 3);//3个为一组，表示一个顶点的xyz坐标
+			// 设置几何体attributes属性的位置属性
+            //geometry.attributes.position = attribue;
+			
+			//他们（自定义几何） 自定义了一个具有六个顶点数据的几何体
+			
+			
+			var material=new THREE.MeshLambertMaterial({ //材质对象
+				color: 0x0000ff,
+				wireframe:true,//网格模型以线条的模式渲染
+				// 如果设置网格模型的wireframe属性为true，所有三角形会以线条形式绘制出来
+			});
+			//2.3材质对象  
+			
+			// 网格模型分为 mesh->三角形渲染模式  和网格材质
+			// 网格模型Mesh的几何体Geometry本质上都是一个一个三角形拼接而成 可以设置三角形的法线方向向量来表示几何体表面各个位置的法线方向向量
+			
+			// 网格模式渲染 即三角形渲染模式 mesh
+			
+			// 2.3.1网格材质
+			//  MeshBasicMaterial     基础网格材质，不受光照影响的材质
+			//  MeshLambertMaterial   Lambert网格材质，与光照有反应，漫反射
+			//  MeshPhongMaterial     高光Phong材质,与光照有反应
+			//  MeshStandardMaterial  PBR物理材质，相比较高光Phong材质可以更好的模拟金属、玻璃等效果
+		
+			
+			
+			//点材质
+			// 2.4 关于点模型
+			
+			// 点渲染模式 Points
+			
+			// 为了更好的理解几何体是由顶点构成的 可以把几何体geometry 作为点模型 points 而不是网格模型mesh 的参数
+			
+			// PointsMaterial 点材质
+			// var material = new THREE.PointsMaterial({}）
+			
+		    // 2.4.1 关于材质属性 .vertexColors  默认值是THREE.NoColors,也就是说模型的颜色渲染效果取决于材质属性.color 即geometry.attributes.color
+			    // var material = new THREE.PointsMaterial({
+			       // 使用顶点颜色数据渲染模型，不需要再定义color属性
+			       // color: 0xff0000,
+			       // vertexColors: THREE.VertexColors, //以顶点颜色为准
+			       //size: 10.0 //点对象像素尺寸
+			    //})
+			
+			// var points = new THREE.Points(geometry, material); //点模型对象
+            // scene.add(points); //点对象添加到场景中
+			
+			//线材质
+			//2.5 关于 线条类型模型 
+			
+			// 线材质  LineBasicMaterial  ， LineDashedMaterial
+			
+		    //	var material=new THREE.LineBasicMaterial({
+			//    color:0xff0000 //线条颜色
+			//  });//材质对象
+			
+			// Line：线渲染模式
+			// LineLoop ：闭环线渲染模式  
+			// LineSegments：间断线渲染模式
+			// var line=new THREE.Line(geometry,material);//线条模型对象
+			// scene.add(line);//线条对象添加到场景中
+			
+			
+			// 此外还有 精灵sprite 材质 自定义着色器材质
+			
+			//2.3.1 材质的共有属性，私有属性
+			// .side 
+			// .opacity
+			var mesh=new THREE.Mesh(geometry,material);//模型对象和材质对象 赋值给 网格 
+			scene.add(mesh);//将网格模型添加到场景中去
+			
+			//2.3.2 关于精灵模型 Sprite
+			// three.js的精灵模型对象Sprite和Threejs的网格模型Mesh一样都是模型对象，基类都是Object3D,
+			// 也需要创建一个材质对象，不同在于 创建精灵模型对象不需要穿点几何体对象Geometry
+			// 精灵模型对象本质上可以理解为内部封装了一个平面矩形几何体PlaneGeometry
+			// 而矩形精灵模型与矩形网格模型区别在于精灵模型的矩形平面会始终平行于canvas画布
+			//
+			//通过sprite 创建精灵模型不需要几何体，只需要给构造函数Sprite的参数设置一个精灵材质SpriteMaterial即可
+			// 其可以设置颜色.color、颜色贴图.map、开启透明.transparent、透明度.opacity等属性
+			//此外他还有自己一些独有的方法和属性 如.rotation旋转精灵模型
+			
+			// 在使用透视投影相机对象的时候，精灵模型对象显示的大小和网格模型一样受距离相机的距离影响，也就是距离越远，显示效果越小
+			
+			//总结 ： 几何体本质 
+			// 立方体网格模型Mesh是由立方体几何体geometry和材质material两部分构成，
+			// 立方体几何体BoxGeometry本质上就是一系列的顶点构成，只是Threejs的APIBoxGeometry把顶点的生成细节封装了，用户可以直接使用
+			
+			
+			//对象克隆.clone()和复制.copy() 
+			
+			
+			//2.6光源设置
+			var point=new THREE.SpotLight(0xffffff); // 构造 点 的函数
+			point.position.set(400,200,300);// 光源位置的设置
+			scene.add(point);//将光源添加到场景中去 
+			// 常见光源类型有
+			//  AmbientLight 环境光
+			//  PointLight  点光源
+			//  DirectionalLight 平行光 如太阳光
+			//  SpotLight  聚光源
+			
+			//  基类  Light
+			//  颜色 .color ，强度 .intensity 
+			
+			//2.6.1
+			// 模型.castShadow属性
+			// 其属性值是布尔值，默认false，用来设置一个模型对象是否在光照下产生投影效果
+			// .receiveShadow属性
+			// 其属性值是布尔值，默认false，用来设置一个模型对象是否在光照下接受其它模型的投影效果
+			// 光源.castShadow属性
+			// 设置用于计算阴影的光源对象
+			//.castShadow = true;
+			// 光源.shadow属性
+			// 阴影对象基类LightShadow
+			   // LightShadow属性.camera
+			   // LightShadow属性.mapSize  定义阴影纹理贴图宽高尺寸的一个二维向量Vector2.
+			   // LightShadow属性.map
+			
+			//2.6.2 组对象group 
+			// .add  .remove
+			// 模型命名  .name属性 进行标记
+			// 查找.getObjectById()、.getObjectByName()  遍历 .traverse()
+			// 本地位置坐标 世界位置坐标 .getWorldPosition()
+			
+			//2.6.3 几何体(geometry)对象 直线 曲线 三维建模
+			
+			//圆弧线ArcCurve  -->基类  椭圆 ：EllipseCurve
+			// ArcCurve( aX, aY, aRadius, aStartAngle, aEndAngle, aClockwise )
+			// ArcCurve(0,0,100,0,2*Math.PI)
+			
+			// 2.6.4 曲线的 方法 .getPoints()
+			//可以从 圆弧线 按照一定的 细分精度 返回 沿着 圆弧线 分布的 顶点坐标
+			//细分数越高返回的顶点数量越多，自然轮廓越接近于圆形
+			// 返回值是一个二维向量vector2或vector3构成的数组
+			
+			//几何体(Geometry)方法.setFromPoints()
+			//该方法可以把数组points中顶点数据提取出来赋值给几何体的顶点位置属性geometry.vertices，数组points的元素是二维向量Vector2或三维向量Vector3
+			// 和 BufferGeometry 的区别是提取顶点数据后赋值给geometry.attributes.position属性
+			
+			// 例 
+			// var points = curve.getPoints(100); //分段数100，返回101个顶点
+			// geometry.setFromPoints(points);
+			
+			// 2.6.5 曲线
+			// 样条曲线            贝塞尔曲线          多个线条组合曲线
+			// CatmullRomCurve3   CubicBezierCurve3   CurvePath
+			
+			//2.6.7  CurvePath 多个线条组合曲线
+			// 基类 curve  --> getPoints()方法 ：从曲线上批量返回顶点数据
+			// 属性.curves --> 2d 直线LineCurve  圆弧ArcCurve  椭圆EllipseCurve  样条曲线SplineCurve
+			               --> 3d  直线LineCurve3  二次贝塞尔曲线QuadraticBezierCurve3
+			
+			//2.6.8  TubeGeometry 曲线路径管道成型 
+			//构造函数格式：TubeGeometry(path, tubularSegments, radius, radiusSegments, closed)
+			//            扫描路径  路径方向细分数，默认64  管道半径，默认1  管道圆弧细分数，默认8  	Boolean值，管道是否闭合
+			
+			//2.6.9  LatheGeometry 旋转成型
+			//可以利用已有的二维数据生成三维顶点数据，二维数据可以通过二维向量对象Vector2定义，也可以通过3D曲线或2D线条轮廓生成
+			// 二维坐标数据默认绕y轴旋转
+			//格式：LatheGeometry(points, segments, phiStart, phiLength)
+			// Vector2表示的坐标数据组成的数组  圆周方向细分数，默认12  开始角度,默认0  旋转角度，默认2π
+			
+			
+			//例如1 var points=[]
+			// var geometry=new THREE.LatheGeometry(points,30);
+			//var material=new THREE.MeshPhongMaterial({})
+			// material.wireframe = true;//线条模式渲染(查看细分数
+			// var mesh=new THREE.Mesh(geometry,material);//旋转网格模型对象
+			// scene.add(mesh);//旋转网格模型添加到场景中
+			//
+			//2.6.10 关于 样条曲线插值计算
+			//借助Shape对象的方法.splineThru()，把上面的三个顶点进行样条插值计算， 可以得到一个光滑的旋转曲面。
+			// var shape = new THREE.Shape();//创建Shape对象
+			// var points = [//定位定点]
+			// shape.splineThru(points);//顶点带入样条插值计算函数
+			// var splinePoints = shape.getPoints(20);//插值计算细分数20
+			// var geometry = new THREE.LatheGeometry(splinePoints,30);//旋转造型
+			
+			
+			//2.6.11 轮廓生成
+			// Shape  
+			    // 绘制二维形状  new THREE.Vector2
+				// 外部导入顶点
+			// 轮廓填充 ShapeGeometry   
+			    // 算法：根据轮廓的顶点 即二维 -->使用三角面Face3自动填充中间区域
+			    // 第一个参数
+			         // Shape对象
+					 // Shape对象作为元素构成的数组
+			// 基类
+			    // 从前到后，依次前面是后面基类
+				// Curve
+				
+			// var points = [//定位二维顶点]	
+			// 通过顶点定义轮廓
+			// var shape = new THREE.Shape(points);
+			// shape可以理解为一个需要填充轮廓
+			// 所谓填充：ShapeGeometry算法利用顶点计算出三角面face3数据填充轮廓
+			// var geometry = new THREE.ShapeGeometry(shape, 25);	
+				
+			// 调用Shape圆弧方法.absarc()绘制一个圆形轮廓，然后通过ShapeGeometry可以把该圆形轮廓填充为一个 圆形平面几何体
+		    // 通过shpae基类path的方法绘制轮廓（本质也是生成顶点）
+			// var shape = new THREE.Shape();
+			// shape.absarc(0,0,100,0,2*Math.PI);//圆弧轮廓
+			// console.log(shape.getPoints(15));//查看shape顶点数据
+			// var geometry = new THREE.ShapeGeometry(shape, 25);
+				
+				
+			//2.6.12  拉伸扫描成型ExtrudeGeometry
+			//构造函数ExtrudeGeometry()和ShapeGeometry一样是利用Shape对象生成几何体对象，
+			//区别在于ExtrudeGeometry()可以利用2D轮廓生成3D模型
+			
+			
+			//2.7 纹理贴图
+			//TextureLoader 的load方法加载一张图片可以返回一个纹理对象 Texture
+			//而Texture 即纹理对象可以作为模型材质颜色贴图.map属性的值
+			//材质的颜色贴图属性.map设置后，模型会从纹理贴图上采集像素值，就无需设置材质颜色.color
+			//
+			//2.7.1 纹理对象Texture
+			//所谓纹理对象Texture简单地说就是，纹理对象Texture的.image属性值是一张图片
+			
+			
+			//2.7.2  纹理UV坐标
+			//其中顶点数据 包括 position color normal UV
+			//uv 
+			//  顶点纹理坐标数据  -->图片映射
+			//  和顶点位置，颜色，法向量等数据一一对应
+			//  Geometry --> .faceVertexUvs[0]  / .faceVertexUvs[1] 
+			//  BufferGeometry  -->.attributes.uv / .attributes.uv2
+			
+			//两组坐标
+			// 第一组即 .faceVertexUvs[0] 用于颜色贴图(.map)、法线贴图(.normalMap)、(.specularMap) 贴图的映射
+			// 第二组即 .faceVertexUvs[1] 用于光照,阴影贴图(.lightMap)的映射
+			
+			//修改纹理坐标
+			
+			//UV映射原理
+			
+			// Geometry自定义顶点UV坐标
+			
+			//2.7.3 纹理对象Texture阵列(repeat)、偏移(offset ,偏移范围-1~1)、旋转(rotation) -->默认不会改变faceVertexUvs
+			
+			//2.8 canvas画布、视频作为纹理贴图
+			//通过Three.js两个类CanvasTexture和VideoTexture可以分别实现把Canvas画布、视频作为纹理贴图使用。
+			
+			//Canvas画布可以通过2D API绘制各种各样的几何形状，可以通过Canvas绘制一个轮廓后然后作为Three.js网格模型、
+			//精灵模型等模型对象的纹理贴图
+			
+			//2.8.1 canvas 画布理解为 一 张 图 片
+			//var canvas=document.createElement("canvas");
+			// 上面canvas代码省略
+			// ...
+			// c.fillText("郭隆邦_技术博客", 0, 0);
+			// canvas画布对象作为CanvasTexture的参数重建一个纹理对象
+			// var texture = new THREE.CanvasTexture(canvas);
+			// console.log(texture.image);//width=512 height=128
+			//矩形平面
+			// var geometry = new THREE.PlaneGeometry(128, 32);
+			
+			// var material = new THREE.MeshPhongMaterial({
+			//   map: texture, // 设置纹理贴图
+			// });
+			// var mesh = new THREE.Mesh(geometry, material);
+			
+			
+			//2.8.2 Canvas画布加载图片,注意在图片加载完成的时候更新Threejs相关模型的纹理贴图。 即texture.needsUpdate = true;
+			// var ctx=canvas.getContext('3d')
+			// var Image=new Image()
+			// Image.src="./photo/1.jpg"
+			// Image.onload=function(){
+			// 	var bg=ctx.createPattern(Image,'no-repeat')
+			// 	// 注意图片加载完成执行canvas相关方法后，要更新一下纹理
+			// 	  texture.needsUpdate = true;
+			// }
+			// var texture=new THREE.CanvasTexture(Image)
+			
+			//2.8.3 视频作为Three.js纹理贴图(VideoTexture)
+			//VideoTexture.js封装了一个update函数,执行update函数中代码this.needsUpdate = true;读取视频流最新一帧图片来更新Threejs模型纹理贴图
+			
+			
+			//2.9 凹凸贴图bumpMap和法线贴图.normalMap
+			//法线贴图 
+			//    法线贴图通过rgb三个分量分别表示法向量的三个坐标
+			//    通过图片保留几何体表面的几何细节
+			//    好处：降低模型大小，减少顶点的计算 ，节约顶点数量，低模+法线贴图=高模
+			
+			//凹凸贴图 bumpMap
+			//    图片像素的灰度值表示几何表面的高低深度
+			//    若定义了法线贴图则忽略凹凸贴图
+			
+			//材质对象 normalMap
+			//    MeshLambertMaterial，MeshBasicMaterial-->没有凹凸、法线贴图属性
+            //    MeshPhongMaterial
+			//             属性 颜色纹理贴图-->.map属性
+			//                  凹凸贴图 .bumpMap : Texture
+			//                           .bumpScale : Float表示深浅程度，默认值1
+            //                  法线贴图 .normalMap : Texture
+			//                           .normalScale : Vector2  -->表示深浅程度 
+			//                                                   -->默认值是Vector2设置为（1,1）
+			
+			//例子 法线贴图使用
+			// var material = new THREE.MeshBasicMaterial({
+			//     map: texture, // 普通颜色纹理贴图
+            //     normalMap: textureNormal, //法线贴图
+			// 	   color: 0xff0000,
+			//     //设置深浅程度，默认值(1,1)。
+			//     normalScale: new THREE.Vector2(3, 3),
+			// })
+			
+			//例子 凹凸贴图使用
+			// var material = new THREE.MeshPhongMaterial({
+			//   map: texture,// 普通纹理贴图
+			//   bumpMap:textureBump,//凹凸贴图
+			//   bumpScale:3,//设置凹凸高度，默认值1。
+			// }); //材质对象Material
+			
+			//2.9.1 Three.js光照贴图添加阴影(·lightMap)
+			//   lightMap:textureLight,// 设置光照贴图
+			
+			//2.9.2 Three.js高光贴图(.specularMap)
+			//   specularMap: textureSpecular, //高光贴图
+			
+			//2.9.3 Three.js环境贴图(.envMap)
+			//   envMap: CubeTexture, //设置环境贴图
+			
+			//   加环境贴图的6张纹理贴图，可以通过CubeTextureLoader类趋势线。
+			//   var loader = new THREE.CubeTextureLoader();
+			//   loader.setPath('环境贴图/');
+			//   立方体纹理加载器返回立方体纹理对象CubeTexture
+			//   var CubeTexture = loader.load(['px.jpg', 'nx.jpg', 'py.jpg', 'ny.jpg', 'pz.jpg', 'nz.jpg']);
+		
+			
+			//2.9.4 Geometry属性.faceVertexUvs
+			//   一般几何体有两套UV坐标，对于Geometry类型几何体而言
+			// Geometry.faceVertexUvs[0]包含的纹理坐标用于颜色贴图map、法线贴图normalMap等
+			// Geometry.faceVertexUvs[1]包含的第二套纹理贴图用于光照阴影贴图
+			// 一般默认只有一组纹理坐标Geometry.faceVertexUvs[0]，所以为了设置光照阴影贴图，
+			// 需要给另一组纹理坐标赋值Geometry.faceVertexUvs[1] = Geometry.faceVertexUvs[0]
+			
+			//2.9.5 BufferGeometry属性.uv和.uv2
+			// 一般通过Threejs加载外部模型，解析三维模型数据得到的几何体类型是
+			// 缓冲类型几何体BufferGeometry，对于BufferGeometry而言两套纹理坐标分别通过.uv和.uv2属性表示
+			// geometry.attributes.uv2 = geometry.attributes.uv;
+			
+			//2.9.6 Three.js数据纹理对象DataTexture
+			// 例子
+			// var width = 32; //纹理宽度
+			// var height = 32; //纹理高度
+			// var size = width * height; //像素大小
+			// var data = new Uint8Array(size * 3); //size*3：像素在缓冲区占用空间
+			// for (let i = 0; i < size * 3; i += 3) {
+			//   // 随机设置RGB分量的值
+			//   data[i] = 255 * Math.random()
+			//   data[i + 1] = 255 * Math.random()
+			//   data[i + 2] = 255 * Math.random()
+			//   // 设置透明度分量A
+			//   data[i + 3] = 255 * 0.5
+			// }
+			// 创建数据文理对象   RGB格式：THREE.RGBFormat
+			// var texture = new THREE.DataTexture(data, width, height, THREE.RGBFormat);
+			// texture.needsUpdate = true; //纹理更新
+			
+			//关于 图片格式
+			// 像素值包含RGB 三 个 分 量 的图片格式有.jpg、.BMP等格式
+			// 对于Threejs而言对WebGL进行封装了，gl.RGB对应的设置是THREE.RGBFormat
+			
+			// 像素值包含RGBA 四 个 分 量 的图片格式有.PNG等格式
+			// 对于Threejs而言对WebGL进行封装了，gl.RGBA对应的设置是THREE.RGBAFormat
+			
+			
+			//3.1 相机设置
+			var width=window.innerWidth;//窗口宽度
+			var height=window.innerHeight;//窗口高度
+			var k=width/height ;//宽高比
+			var s=200;//3d范围控制系数
+			
+			//3 创建相机对象
+			var camera=new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+			camera.position.set(200,300,200);//设置相机位置
+			camera.lookAt(scene.position);//定义相机的位置与方向 即指向的场景对象
+			
+			// 3.1 相机对象
+			// OrthographicCamera  正投影相机 
+			// PerspectiveCamera   透视投影相机
+			// CubeCamera          立方相机
+			// 基类Camera          属性  --> 视图矩阵.matrixWorldInverse
+			//                           --> 投影矩阵.projectionMatrix
+			
+			
+			//正投影相机  OrthographicCamera
+			//   var width=window.innerWidth;
+			//   var height=window.innerHeight;
+			//   var k=width/height
+			//   var s=120;三维场景显示范围控制系数
+			//   var camera=new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+			//   camera.position.set(200,300,200)
+			//   camera.lookAt(scene.position) //相机拍摄目标位置
+			
+			// .lookAt()方法的参数是表示位置坐标的三维向量对象Vector3，所以.lookAt()方法的参数可以通过代码new THREE.Vector3(x,y,z)设置。
+			
+			//构造函数格式
+            // OrthographicCamera( left, right, top, bottom, near, far )
+			
+			//透视投影相机  PerspectiveCamera 
+			
+			// 构造函数PerspectiveCamera格式
+			// PerspectiveCamera( fov：摄像机视锥体垂直视野角度, aspect（摄像机视锥体长宽比） :width/height, near, far )
+			// aspect :width/height
+			// near :一般会设置一个很小的值
+			
+			//3.2 Three.js浏览器窗口尺寸变化(自适应渲染)
+			// 视图矩阵.matrixWorldInverse和投影矩阵.projectionMatrix
+			
+			//3.2.1 正投影相机OrthographicCamera自适应渲染
+			//    比如全屏渲染的时候，为了适应窗口的大小变化，要重新设置相机对象和渲染器对象的参数，不需要在渲染函数render中周期性更新，只需要通过窗口事件window.onresize来触发一个函数
+			//    之后在函数中更新相机Camera和渲染器WebGLRenderer的参数。
+			
+			//4. 创建渲染器对象
+			var renderer =new THREE.WebGLRenderer();
+			renderer.setSize(width,height);//设置渲染区域尺寸 如 宽  高
+			renderer.setClearColor(0xb9d3ff,1);//设置背景颜色
+			
+			document.body.appendChild(renderer.domElement);//向body元素中插入canvas对象
+			
+			// 4.1最后 执行渲染操作  指定 场景 相机 作为参数
+			// renderer.render(scene, camera);
+			
+			// 4.2 编辑关键帧并解析播放
+			// KeyframeTrack    关键帧
+			// AnimationClip    剪辑  
+			// AnimationAction  操作
+			//AnimationMixer    混合器
+			
+			// 帧动画应用  -->骨骼动画，变形目标动画，淡入淡出等
+			//   编辑  关键帧KeyframeTrack  -->位置、颜色等属性随着时间变化
+			                               -->离散时间点对应离散属性值
+										   
+			//         剪辑AnimationClip   -->多个关键帧构成一个剪辑clip对象
+			
+			//   播放  操作AnimationAction  -->设置播放方式、开始播放、暂停播放...
+			//         混合器AnimationMixer -->一个对象及其子对象的动画播放器
+ 
+            // 第一步先利用关键帧KeyframeTrack、剪辑AnimationClip两个类创建好帧动画。
+			// // 设置变形目标1对应权重随着时间的变化
+			// 设置变形目标的数据
+			// 设置第一组顶点对几何体形状影响的变形系数
+			//
+			// 创建关键帧对象
+			// mesh.morphTargetInfluences[0] = 0.5;
+            // var Track1 = new THREE.KeyframeTrack('.morphTargetInfluences[0] 可为 系数值、位置关键帧对象，颜色关键帧对象', [0,10,20] time值, [0,1, 0]values值); //创建关键帧对象
+			// 其中time值 表示 关键帧时间数组，离散的时间点序列
+			// values值表示  与时间点对应的值组成的数组
+			// 创建一个剪辑clip对象，命名"default"，持续时间40
+			// var clip = new THREE.AnimationClip("default", 40, [Track1,Track2]
+			
+            // 第二步是使用混合器AnimationMixer播放设置好的关键帧动画。
+			// var mixer = new THREE.AnimationMixer(mesh); //创建混合器 用来播放相应对象的帧动画
+			
+			// var AnimationAction = mixer.clipAction(clip); //剪辑clip作为参数，通过混合器clipAction 返回动画操作对象AnimationAction
+			// AnimationAction.timeScale = 5; //默认1，可以调节播放速度 //通过操作Action设置播放方式
+			
+			// AnimationAction.play(); //开始播放
+			
+			//在 创建一个时钟对象Clock
+			// var clock = new THREE.Clock();
+			// 注意在渲染函数render()中执行mixer.update(渲染间隔时间)告诉帧动画系统Threejs两次渲染的时间间隔，
+			// 获得时间间隔可以通过Threejs提供的一个时钟类Clock实现
+			//渲染函数
+			// function render() {
+				  // renderer.render(scene, camera); //执行渲染操作
+				  // requestAnimationFrame(render); //请求再次执行渲染函数render，渲染下一帧
+				
+				  //clock.getDelta()方法获得两帧的时间间隔
+				  // 更新混合器相关的时间
+				  // mixer.update(clock.getDelta());
+			// }
+			// render();
+			
+			
+			
+			
+            // 4.3  Three.js骨骼动画(SkinnedMesh)
+			//  bone   骨头关节  ：树结构 -->一个父关节可以有多个子关节
+			//                   ：基类Object3D
+			
+			//  skinnedMesh  骨骼网格模型 :基类Mesh -->基类Object3D
+			
+			//  skeleton  骨骼对象 : 绑定skeleton和SkinnedMesh
+			//                     : 骨头Bone构成骨架Skeleton
+			
+			//  Geometry   .skinWeights : Array -->顶点权重数组
+            //             .skinIndices : Array  -->顶点索引
+			
+			
+			// 4.4  Three.js变形动画geometry.morphTargets
+			// 即多组顶点数据，从一个状态变化到另一个状态
+			// 创建变形动画的顶点数据
+			//     通过几何体Geometry的变形目标属性.morphTargets设置好变形动画
+			
+			// 生成变形动画  -->改变morphTargetInfluences属性的值可以改变网格模型的形状
+			//     网格模型.morphTargetInfluences属性
+			//     设置变形目标的数据
+			//     geometry.morphTargets[0] = {name: 'target1',vertices: box1.vertices};
+			//     var material = new THREE.MeshLambertMaterial({
+			//       morphTargets: true, //允许变形
+			//       color: 0x0000ff
+			//     }); 
+			
+			// 4.5 Three.js音频
+			// 音频Audio、位置音频PositionalAudio、监听者AudioListener、音频分析器AudioAnalyser、音频加载器AudioLoader
+			
+			// 非位置音频THREE.Audio
+			
+			//   创建一个监听者 var listener = new THREE.AudioListener();
+			//   创建一个非位置音频对象  用来控制播放  var audio = new THREE.Audio(listener);
+			//   创建一个音频加载器对象  var audioLoader = new THREE.AudioLoader();
+			//   加载音频文件，返回一个音频缓冲区对象作为回调函数参数  
+			// audioLoader.load('中国人.mp3', function(AudioBuffer) { 
+		    //        audio.setBuffer(AudioBuffer);
+			// 		  audio.setLoop(true); //是否循环
+			// 		  audio.setVolume(0.5); //音量
+			// 		  // 播放缓冲区中的音频数据
+			// 		  audio.play(); //play播放、stop停止、pause暂停
+			// 		});
+			
+			
+			//4.6 模型文件加载
+			//4.6.1 数据结构，导入导出
+			// 查看Threejs文档Geometry、Material、Light、Object3D等类，这些类都提供了一个方法.toJSON()通过这个方法可以导出Threejs三维模型的各类数据
+			// 控制台查看geometry.toJSON()结果
+			// console.log(geometry.toJSON())
+			// JSON.stringify()方法内部会自动调用参数的toJSON()方法 ：'object对象'  --> 和 JSON对象转化为字符串 ：字符串string
+			
+			//4.6.2 自定义模型加载文件
+			
+			// 加载器 ：Threejs在three.js-master\examples\js\loaders目录下会提供一系列的加载器
+			// 解析模型文件的字符串，通过正则表达式提取相关的顶点、材质等信息转化为Threejs自身的类表示的对象
+			//常见加载器有
+			//  STL --> STLLoader
+			//  obj与mtl -->OBJLoader MTLLoader
+            //  FBX -->FBXLoader
+			//  Collada --> ColladaLoader2
+			//  PLY  -->PlyLoader
+			//  GLTF  -->GLTFLoader
+			
+			
+			//4.6.3 .stl格式模型加载
+			// 基本所有的三维软件都支持导出.stl格式的三维模型文件
+			// .stl格式的三维模型不包含材质Material信息，只包含几何体顶点数据的信息，可把stl文件理解为几何体对象geometry
+			
+			// 通过STLLoader.js加载.stl文件
+			//   可以使用Threejs提供的一个扩展库stl加载器STLLoader.js 即在Three.js-master包中找到STLLoader.js文件
+			//   引入该文件后，就可以在代码中使用构造函数THREE.STLLoader()实例化一个加载器。
+			//   通过构造函数THREE.STLLoader()可以把.stl文件中几何体顶点信息提取出来转化为Three.js自身格式的几何体对象BufferGeometry。
+			// THREE.STLLoader创建一个加载器
+			// var loader = new THREE.STLLoader();
+			// loader.load('立方体.stl',function (geometry) {
+			// 加载完成后会返回一个几何体对象BufferGeometry，你可以通过Mesh、Points等方式渲染该几何体
+			//     var material = new THREE.MeshLambertMaterial({
+			//       color: 0x0000ff,
+			//     }); //材质对象Material
+			//     var mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+			//     scene.add(mesh); //网格模型添加到场景中
+			// })
+			
+			
+			//4.6.4 加载.obj模型文件
+			// 使用三维软件导出.obj模型文件的时候，会同时导出一个材质文件.mtl， .obj和.stl文件包含的信息一样都是几何体顶点相关数据，
+			//材质文件.mtl包含的是模型的材质信息，比如颜色、贴图路径
+			
+			//加载.obj三维模型的时候，可 以 只 加 载 .obj文件，然后借助three.js引擎自定义材质Material，
+			// 也 可 以 同 时 加 载 .obj 和 .mtl 文 件。
+			//只加载obj文件，引入路径three.js-master/examples/js/loaders/OBJLoader.js下的OBJLoader.js文件即可
+			
+			//var loader = new THREE.OBJLoader();
+			// loader.load('./立方体/box.obj',function (obj) {
+			//   // 控制台查看返回结构：包含一个网格模型Mesh的组Group
+			//   console.log(obj);
+			//   // 查看加载器生成的材质对象：MeshPhongMaterial
+			//   console.log(obj.children[0].material);
+			//   scene.add(obj);
+			// })
+			// 加载文件返回的对象插入场景中后，你也可以做一些自定的设置，比如缩放、居中等操作
+			// obj.children[0].scale.set(20,20,20);//网格模型缩放
+			
+			//同时加载obj文件和mtl文件
+			// mtl文件包含了模型的材质信息，比如模型颜色、透明度等信息，还有纹理贴图的路径，比如颜色贴图、法线贴图、高光贴图等等
+			// 引入 后 声明 
+			
+			//obj包含多个网格模型
+			// obj文件可以包含多个网格模型对象，不一定就是一个，这些网格模型对象全部是并列关系，无法通过父子关系构建一个树结构层级模型
+			
+			//.obj文件不包含信息
+			// .obj文件不包含场景的相机Camera、光源Light等信息，不能导出骨骼动画、变形动画，
+			//如果希望导出光照信息、相机信息、骨骼动画信息、变形动画信息，可以选择.fbx、.gltf等格式。
+			
+			//模型纹理贴图
+			
+			// 导出.obj和.mtl的名称、路径问题
+			// 3dmax导出的obj和mtl模型文件有时候需要修改一下个别位置字符 及相对路径
+			
+			//4.6.5 加载FBX并解析骨骼动画
+			//加载器FBXLoader.js
+			
+			// 4.7 Three.js全屏/局部渲染
+			//全屏渲染
+			//直接通过Three.js的WebGL渲染器WebGLRenderer的.setSize()方法设置渲染尺寸为浏览器body区域宽高度。
+			//即 
+			// var width = window.innerWidth; //浏览器窗口宽度
+			// var height = window.innerHeight; //浏览器窗口高度
+			// body元素中插入Threejs渲染结果：canvas对象
+			// document.body.appendChild(renderer.domElement);
+			
+			//局部渲染 
+			// 渲染结果.domElement(Canvas元素)插入到一个div元素中。
+			// var width = 300; //窗口宽度
+			// var height = 300; //窗口高度
+			
+			// 可以通过渲染结果.domElement(Canvas元素)的父元素div来控制渲染区域在浏览器上的位置。
+			// <div id="pos" style="position: absolute;left: 30px;top: 100px;"></div>
+			
+			//鼠标操作
+			function render() {
+			  renderer.render(scene,camera);//执行渲染操作
+			}
+			render();
+			var controls = new THREE.OrbitControls(camera,renderer.domElement);//创建控件对象
+			controls.addEventListener('change', render);//监听鼠标、键盘事件
+ 
+			
+		</script>
+	</body>
+</html>
